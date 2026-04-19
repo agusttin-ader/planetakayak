@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { IMAGE_QUALITY } from "@/lib/image-quality";
 import { formatPriceArs, type Tour } from "@/data/tours";
 
 type Props = {
@@ -18,8 +19,9 @@ export function TourCard({ tour }: Props) {
             src={tour.coverImageSrc}
             alt={tour.coverAlt}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className={`object-cover ${tour.coverObjectPositionClass ?? "object-center"} transition duration-500 ease-out group-hover:scale-[1.04]`}
+            quality={IMAGE_QUALITY.tourCover}
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 45vw, 400px"
+            className={`object-cover ${tour.coverObjectPositionClass ?? "object-center"} transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100`}
           />
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 to-transparent pb-4 pl-5 pr-5 pt-14">
             <p className="inline-flex rounded-full bg-black/45 px-3 py-1 text-xs font-medium text-white">

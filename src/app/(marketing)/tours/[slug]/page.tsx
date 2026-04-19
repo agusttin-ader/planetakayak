@@ -6,6 +6,7 @@ import { CtaWhatsapp } from "@/components/cta/CtaWhatsapp";
 import { Reveal } from "@/components/motion/Reveal";
 import { formatPriceArs, getTourBySlug, getAllTourSlugs } from "@/data/tours";
 import { siteConfig } from "@/data/site";
+import { IMAGE_QUALITY } from "@/lib/image-quality";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -51,8 +52,9 @@ export default async function TourDetailPage({ params }: PageProps) {
               alt={tour.coverAlt}
               fill
               priority
+              quality={IMAGE_QUALITY.tourDetail}
               className={`object-cover ${tour.coverObjectPositionClass ?? "object-center"}`}
-              sizes="(max-width: 768px) 100vw, 1152px"
+              sizes="(max-width: 768px) 100vw, (max-width: 1536px) 90vw, 1152px"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/25 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8 md:p-10">

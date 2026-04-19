@@ -9,6 +9,7 @@ const dmSans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
+  adjustFontFallback: true,
 });
 
 const metadataBaseUrl = process.env.NEXT_PUBLIC_SITE_URL

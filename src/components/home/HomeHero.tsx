@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { CtaWhatsapp } from "@/components/cta/CtaWhatsapp";
 import { WaveDivider } from "@/components/ui/WaveDivider";
 import { siteConfig } from "@/data/site";
+import { IMAGE_QUALITY } from "@/lib/image-quality";
 import { easeHero, easeOutExpo } from "@/lib/motion-ease";
 
 const bgEase = easeOutExpo;
@@ -55,11 +56,11 @@ export function HomeHero() {
   return (
     <section className="relative isolate min-h-[85svh] overflow-hidden bg-[var(--pk-sky)] md:min-h-[min(88vh,920px)]">
       <motion.div
-        className="pointer-events-none absolute inset-0 origin-center will-change-transform"
-        initial={reduce ? undefined : { scale: 1.05 }}
+        className="pointer-events-none absolute inset-0 origin-center [transform:translateZ(0)]"
+        initial={reduce ? undefined : { scale: 1.035 }}
         animate={reduce ? undefined : { scale: 1 }}
         transition={{
-          duration: reduce ? 0 : 1.15,
+          duration: reduce ? 0 : 1,
           ease: bgEase,
         }}
       >
@@ -68,7 +69,7 @@ export function HomeHero() {
           alt="Kayak en el Nahuel Huapi, Bariloche"
           fill
           priority
-          quality={92}
+          quality={IMAGE_QUALITY.hero}
           className="object-cover object-center"
           sizes="100vw"
         />

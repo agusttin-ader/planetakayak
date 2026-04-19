@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/data/site";
+import { IMAGE_QUALITY } from "@/lib/image-quality";
 
 export const metadata: Metadata = {
   title: "Galería",
@@ -61,8 +62,9 @@ export default function GaleriaPage() {
               src={img.src}
               alt={img.alt}
               fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="object-cover transition duration-500 hover:scale-[1.02]"
+              quality={IMAGE_QUALITY.gallery}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px"
+              className="object-cover transition-transform duration-500 ease-out hover:scale-[1.02] motion-reduce:transition-none motion-reduce:hover:scale-100"
             />
           </li>
         ))}

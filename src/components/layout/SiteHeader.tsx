@@ -8,13 +8,42 @@ import { siteConfig } from "@/data/site";
 import { mainNavLinks } from "@/components/layout/nav-links";
 import { drawerPanelSpring, easeOutExpo } from "@/lib/motion-ease";
 
-function navLinkDesktop(active: boolean) {
-  return [
-    "rounded-md px-3 py-2 text-sm font-medium transition-colors",
-    active
-      ? "bg-[var(--pk-lake)]/15 text-[var(--pk-lake-deep)]"
-      : "text-[var(--pk-ink-muted)] hover:bg-black/5 hover:text-[var(--pk-ink)]",
-  ].join(" ");
+function DesktopNavLink({
+  href,
+  label,
+  active,
+}: {
+  href: string;
+  label: string;
+  active: boolean;
+}) {
+  const reduce = useReducedMotion();
+  const barDuration = reduce ? "duration-0" : "duration-500";
+  const barEase = "ease-[cubic-bezier(0.25,0.1,0.2,1)]";
+
+  return (
+    <Link
+      href={href}
+      className={[
+        "group inline-flex min-w-0 flex-col items-stretch gap-px px-2.5 py-1.5 text-base font-medium leading-tight tracking-tight outline-none transition-colors duration-200",
+        active
+          ? "text-[var(--pk-lake-deep)]"
+          : "text-[var(--pk-ink-muted)] hover:text-[var(--pk-ink)]",
+        "rounded-sm focus-visible:ring-2 focus-visible:ring-[var(--pk-lake-deep)]/30 focus-visible:ring-offset-2",
+      ].join(" ")}
+    >
+      <span className="whitespace-nowrap">{label}</span>
+      <span
+        aria-hidden
+        className={[
+          "pointer-events-none block h-0.5 w-full max-w-full origin-left scale-x-0 rounded-sm bg-[var(--pk-lake-deep)]",
+          barDuration,
+          barEase,
+          active ? "scale-x-100" : "group-hover:scale-x-100",
+        ].join(" ")}
+      />
+    </Link>
+  );
 }
 
 function navDrawerLink(active: boolean) {
@@ -95,15 +124,9 @@ export function SiteHeader() {
           <span className="truncate">{siteConfig.shortName}</span>
         </Link>
 
-        <nav className="hidden items-center gap-0.5 md:flex" aria-label="Principal">
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Principal">
           {mainNavLinks.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className={navLinkDesktop(pathname === href)}
-            >
-              {label}
-            </Link>
+            <DesktopNavLink key={href} href={href} label={label} active={pathname === href} />
           ))}
         </nav>
 
