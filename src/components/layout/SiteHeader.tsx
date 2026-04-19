@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState, type MouseEvent } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { siteConfig } from "@/data/site";
 import { mainNavLinks } from "@/components/layout/nav-links";
@@ -26,17 +26,27 @@ function navDrawerLink(active: boolean) {
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
+  const bodyOverflowBeforeLock = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (!open) return;
-    const prev = document.body.style.overflow;
+    bodyOverflowBeforeLock.current = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
   }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    mainNavLinks.forEach(({ href }) => {
+      router.prefetch(href);
+    });
+  }, [open, router]);
+
+  function handleDrawerExitComplete() {
+    document.body.style.overflow = bodyOverflowBeforeLock.current ?? "";
+  }
 
   function logoClick(e: MouseEvent<HTMLAnchorElement>) {
     setOpen(false);
@@ -49,7 +59,8 @@ export function SiteHeader() {
     }
   }
 
-  const panelTransition = reduce ? { duration: 0.14, ease: easeOutExpo } : drawerPanelSpring;
+  const panelEnterTransition = reduce ? { duration: 0.14, ease: easeOutExpo } : drawerPanelSpring;
+  const panelExitTransition = reduce ? { duration: 0 } : { duration: 0.22, ease: easeOutExpo };
 
   return (
     <header
@@ -136,7 +147,7 @@ export function SiteHeader() {
         </button>
       </div>
 
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={handleDrawerExitComplete}>
         {open ? (
           <motion.div
             key="nav-panel"
@@ -147,8 +158,11 @@ export function SiteHeader() {
             className="fixed inset-0 z-[120] flex h-[100dvh] w-full max-w-[100vw] flex-col overflow-hidden bg-white pb-[env(safe-area-inset-bottom)] pt-[calc(env(safe-area-inset-top)+5rem)] outline-none ring-0 md:hidden"
             initial={reduce ? false : { x: "100%" }}
             animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={panelTransition}
+            exit={{
+              x: "100%",
+              transition: panelExitTransition,
+            }}
+            transition={panelEnterTransition}
           >
             <nav
               className="mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-y-auto overscroll-contain px-5 pb-8 pt-2 sm:px-8"
@@ -158,7 +172,8 @@ export function SiteHeader() {
                 <Link
                   key={href}
                   href={href}
-                  className={navDrawerLink(pathname === href)}
+                  prefetch
+                  className={`${navDrawerLink(pathname === href)} touch-manipulation`}
                   onClick={() => setOpen(false)}
                 >
                   <span>{label}</span>
