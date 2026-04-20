@@ -59,12 +59,22 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
   const bodyOverflowBeforeLock = useRef<string | undefined>(undefined);
+  const htmlOverflowBeforeLock = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (!open) return;
+    htmlOverflowBeforeLock.current = document.documentElement.style.overflow;
     bodyOverflowBeforeLock.current = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
   }, [open]);
+
+  useEffect(() => {
+    return () => {
+      document.documentElement.style.overflow = htmlOverflowBeforeLock.current ?? "";
+      document.body.style.overflow = bodyOverflowBeforeLock.current ?? "";
+    };
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -74,6 +84,7 @@ export function SiteHeader() {
   }, [open, router]);
 
   function handleDrawerExitComplete() {
+    document.documentElement.style.overflow = htmlOverflowBeforeLock.current ?? "";
     document.body.style.overflow = bodyOverflowBeforeLock.current ?? "";
   }
 
@@ -95,7 +106,7 @@ export function SiteHeader() {
     <header
       className={[
         "sticky top-0 z-40 bg-white shadow-[0_1px_0_rgba(15,23,42,0.06)]",
-        open && "shadow-none",
+        open && "z-[140] shadow-none",
       ]
         .filter(Boolean)
         .join(" ")}
@@ -178,7 +189,7 @@ export function SiteHeader() {
             role="dialog"
             aria-modal="true"
             aria-label="Menú principal"
-            className="fixed inset-0 z-[120] flex h-[100dvh] w-full max-w-[100vw] flex-col overflow-hidden bg-white pb-[env(safe-area-inset-bottom)] pt-[calc(env(safe-area-inset-top)+5rem)] outline-none ring-0 md:hidden"
+            className="fixed inset-0 z-[120] flex h-[100dvh] w-full max-w-[100vw] flex-col overflow-hidden overscroll-none bg-white pb-[env(safe-area-inset-bottom)] pt-[calc(env(safe-area-inset-top)+5rem)] outline-none ring-0 md:hidden"
             initial={reduce ? false : { x: "100%" }}
             animate={{ x: 0 }}
             exit={{
@@ -188,7 +199,7 @@ export function SiteHeader() {
             transition={panelEnterTransition}
           >
             <nav
-              className="mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-y-auto overscroll-contain px-5 pb-8 pt-2 sm:px-8"
+              className="mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-y-auto overscroll-none px-5 pb-8 pt-2 sm:px-8"
               aria-label="Principal móvil"
             >
               {mainNavLinks.map(({ href, label }) => (
